@@ -1,93 +1,941 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Create Account - Traderscheem</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { box-sizing: border-box; }
-    body { background: #0a0a0a; color: white; font-family: Arial, sans-serif; text-align: center; padding: 50px 20px; margin: 0; }
-    .box { background: #1a1a1a; padding: 30px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-    h2 { margin-top: 0; }
-    p { color: #888; font-size: 14px; margin-bottom: 20px; }
-    input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #333; background: #222; color: #fff; font-size: 15px; outline: none; }
-    button { width: 100%; background: #007bff; color: white; padding: 12px; border: none; border-radius: 5px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
-    button:disabled { background: #555; cursor: not-allowed; }
-    a { color: #00ff88; text-decoration: none; font-size: 14px; }
-    a:hover { text-decoration: underline; }
-    #msg { margin-top: 15px; font-size: 14px; }
-    .error { color: #ff4d4d; }
-    .success { color: #00ff88; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08101e">
+<title>Traders Scheem</title>
+
+<style>
+:root {
+  --bg: #07101e;
+  --gold: #f5c94b;
+  --cyan: #38d5f4;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: #f7f9ff;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+button, a { font: inherit; }
+button { cursor: pointer; }
+
+/* Sticky navigation */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  min-height: 86px;
+  background: linear-gradient(110deg,#07111f,#111b2d);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  gap: 10px;
+  border-bottom: 1px solid #243047;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo {
+  width: 56px;
+  height: 56px;
+  border: 2px solid #98772b;
+  border-radius: 16px;
+  background: radial-gradient(circle,#15334c,#08101d);
+  display: grid;
+  place-items: center;
+  color: var(--cyan);
+  font-size: 32px;
+  flex-shrink: 0;
+}
+.brand-name {
+  font-size: 22px;
+  line-height: 1.05;
+  font-weight: 900;
+}
+.brand-name span {
+  display: block;
+  color: var(--gold);
+  margin-top: 4px;
+}
+.nav-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.nav-btn {
+  border: 1px solid #559fe9;
+  border-radius: 17px;
+  padding: 12px;
+  min-height: 52px;
+  background: linear-gradient(120deg,#172337,#241b2b);
+  color: white;
+  font-weight: 800;
+}
+.nav-btn.open {
+  background: linear-gradient(115deg,#ffe57a,#d59a11);
+  border: 0;
+  color: #17121a;
+}
+
+/* Animated market ticker */
+.ticker {
+  position: sticky;
+  top: 86px;
+  z-index: 19;
+  height: 38px;
+  background: #050b15;
+  border-bottom: 1px solid #1e2a3c;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #aab6c8;
+  font-family: monospace;
+  font-size: 14px;
+}
+.ticker-track {
+  display: flex;
+  gap: 45px;
+  min-width: max-content;
+  animation: ticker 24s linear infinite;
+}
+.up { color: #27d9a2; }
+.down { color: #f06c91; }
+@keyframes ticker {
+  to { transform: translateX(-50%); }
+}
+
+/* Hero section */
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 1050px;
+  overflow: hidden;
+  padding: 50px 20px 70px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 25% 17%,#183b5a,transparent 38%),
+    radial-gradient(ellipse at 100% 24%,#39205c,transparent 42%),
+    radial-gradient(ellipse at 50% 80%,#382b20,transparent 43%),
+    linear-gradient(180deg,#0a1729,#111527 68%,#0a1220);
+}
+#chart-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: .72;
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: auto;
+}
+.hero-logo {
+  width: 116px;
+  height: 116px;
+  margin: 6px auto 35px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  border: 1px dotted #e2c24d;
+  box-shadow: 0 0 35px #38d5f42a;
+}
+.hero-logo .logo {
+  width: 84px;
+  height: 84px;
+  border-radius: 26px;
+}
+.orbit {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #f5d64b;
+  border-radius: 50%;
+  top: 7px;
+  right: 13px;
+  box-shadow: 0 0 18px #f5d64b;
+  animation: orbit 5s ease-in-out infinite;
+}
+@keyframes orbit {
+  50% {
+    transform: translate(-25px,42px);
+    background: var(--cyan);
+  }
+}
+h1 {
+  font-size: clamp(38px,9vw,66px);
+  line-height: 1.04;
+  letter-spacing: -2px;
+  margin: 0 0 35px;
+  font-weight: 900;
+}
+h1 span {
+  background: linear-gradient(100deg,#fff3bc,#f5c83d,#fff0a2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.tagline {
+  border: 1px solid #8c733b;
+  border-radius: 40px;
+  padding: 14px 18px;
+  max-width: 680px;
+  margin: 0 auto 55px;
+  color: #f5d879;
+  font-size: 15px;
+  font-weight: 850;
+  letter-spacing: 1.5px;
+  line-height: 1.5;
+}
+.greeting {
+  font-size: 25px;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 25px;
+}
+.typing-line {
+  font-size: clamp(29px,6vw,42px);
+  font-weight: 900;
+  min-height: 53px;
+  margin: 0 auto 40px;
+}
+.cyan { color: var(--cyan); }
+.cursor {
+  display: inline-block;
+  width: 3px;
+  height: .95em;
+  background: var(--gold);
+  animation: blink .8s steps(2) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+.description {
+  max-width: 680px;
+  margin: 0 auto 75px;
+  font-size: clamp(17px,3.6vw,23px);
+  line-height: 1.65;
+  color: #c5ccd9;
+}
+
+/* Hero feature cards */
+.features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 900px;
+  margin: auto;
+  text-align: left;
+}
+.feature {
+  border: 1px solid #5e4d2d;
+  border-radius: 27px;
+  background: linear-gradient(145deg,#07101fef,#080e1bf7);
+  padding: 25px 22px;
+  min-height: 230px;
+  box-shadow: 0 10px 35px #0005;
+}
+.feature.secondary { border-color: #31516a; }
+.quote {
+  color: var(--gold);
+  font-size: 30px;
+  text-align: right;
+}
+.feature p {
+  color: #c5cbd8;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.65;
+  margin: 20px 0 24px;
+}
+.feature h2 { font-size: 22px; margin-bottom: 8px; }
+.sub { color: var(--gold); font-weight: 800; }
+.feature.secondary .sub { color: #63dafa; }
+
+/* Statistics */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  max-width: 650px;
+  margin: 65px auto 0;
+}
+.stat {
+  border: 1px solid #2b526f;
+  border-radius: 23px;
+  min-height: 150px;
+  padding: 20px;
+  background: #07101ed9;
+  box-shadow: inset 0 2px 0 var(--cyan);
+}
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--cyan);
+  border-radius: 13px;
+  margin: 0 auto 8px;
+  display: grid;
+  place-items: center;
+  color: var(--cyan);
+  font-size: 23px;
+}
+.stat strong { font-size: 38px; display: block; }
+.stat small { color: #aab8c9; font-weight: 700; }
+
+/* All scroll-down sections */
+.content-section {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto 34px;
+  padding: 32px 28px;
+  border: 1px solid #39465c;
+  border-radius: 30px;
+  background: linear-gradient(145deg,#0a1527f5,#07101ef7);
+  box-shadow: 0 16px 45px #0005;
+  text-align: center;
+}
+.section-kicker {
+  display: inline-block;
+  border: 1px solid #776632;
+  border-radius: 28px;
+  padding: 8px 18px;
+  color: var(--gold);
+  font-weight: 900;
+  letter-spacing: 2px;
+  font-size: 14px;
+  margin-bottom: 22px;
+}
+.content-section h2 {
+  font-size: clamp(27px,5.5vw,38px);
+  line-height: 1.2;
+  margin: 0 auto 18px;
+  letter-spacing: -.8px;
+}
+.section-lead {
+  font-size: clamp(17px,3.6vw,22px);
+  line-height: 1.6;
+  color: #aebbd0;
+  margin: 0 auto 26px;
+  max-width: 720px;
+}
+.section-copy {
+  font-size: clamp(16px,3.4vw,21px);
+  line-height: 1.75;
+  color: #c6cfdd;
+  margin: 22px auto 0;
+  max-width: 760px;
+}
+.detail-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 38px;
+  text-align: left;
+}
+.detail-card {
+  border: 1px solid #263d55;
+  border-radius: 28px;
+  padding: 28px 26px;
+  background: linear-gradient(145deg,#09172a,#050c18);
+}
+.detail-card.gold { border-color: #61522b; }
+.detail-card.purple { border-color: #4b416c; }
+.detail-card.rose { border-color: #51404e; }
+.detail-icon {
+  width: 96px;
+  height: 96px;
+  border: 2px solid #3b9ac1;
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  font-size: 37px;
+  color: #48d7fa;
+  background: radial-gradient(circle,#153a56,#08101f);
+  margin-bottom: 24px;
+}
+.detail-card.gold .detail-icon {
+  color: var(--gold);
+  border-color: #a58b42;
+  background: radial-gradient(circle,#3b3218,#08101f);
+}
+.detail-card.purple .detail-icon {
+  color: #b397ff;
+  border-color: #8d73c8;
+}
+.detail-card.rose .detail-icon {
+  color: #ff7297;
+  border-color: #b85676;
+}
+.detail-card h3 {
+  font-size: clamp(23px,4.5vw,30px);
+  margin: 0 0 8px;
+}
+.subheading {
+  font-size: 19px;
+  font-weight: 800;
+  color: #56d7f7;
+  margin-bottom: 14px;
+}
+.detail-card.gold .subheading { color: var(--gold); }
+.detail-card p {
+  font-size: clamp(16px,3.4vw,20px);
+  line-height: 1.7;
+  color: #bdc8d8;
+  margin: 0;
+}
+
+/* Three getting-started steps */
+.steps .detail-card { border-color: #393a2b; }
+.step-number {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg,#ffe879,#dba81c);
+  color: #17131a;
+  font-size: 32px;
+  font-weight: 900;
+  border: 5px solid #6b5728;
+  box-shadow: 0 0 22px #e6bc3740;
+  margin-bottom: 24px;
+}
+
+/* Partner section */
+.partner-icon { margin: 0 auto 22px; }
+.partner-title {
+  font-size: clamp(32px,6vw,44px) !important;
+  color: #fff0bb;
+}
+.pill {
+  display: inline-block;
+  border: 1px solid #806b31;
+  border-radius: 30px;
+  padding: 10px 20px;
+  color: var(--gold);
+  font-weight: 900;
+  font-size: 19px;
+  margin: 4px 0 10px;
+  background: #211e1b;
+}
+.section-button {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  margin: 14px auto 0;
+  padding: 15px 18px;
+  border-radius: 17px;
+  border: 1px solid #4b9ad4;
+  background: linear-gradient(110deg,#102338,#201d31);
+  color: #f4f7ff;
+  font-weight: 850;
+  font-size: 17px;
+}
+.section-button.primary {
+  border: 0;
+  background: linear-gradient(110deg,#11b8e8,#692be0);
+  box-shadow: 0 10px 28px #4e32c533;
+}
+.community {
+  background: linear-gradient(130deg,#332b1dcb,#142236e8,#33205aab);
+  border: 0;
+}
+.community .section-button {
+  border-radius: 35px;
+  background: linear-gradient(100deg,#099ed9,#32bfe7);
+  max-width: 500px;
+}
+.trust-pills {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+.trust-pills span {
+  border: 1px solid #4d4634;
+  border-radius: 30px;
+  padding: 12px 16px;
+  background: #080f1be8;
+  color: #d5deeb;
+  font-weight: 700;
+}
+.footer {
+  padding: 25px 15px 35px;
+  text-align: center;
+  color: #8794a8;
+  font-size: 13px;
+  background: #080f1b;
+}
+
+/* Mobile responsive */
+@media (min-width:760px) {
+  .nav { padding-left: 28px; padding-right: 28px; }
+  .content-section { padding: 42px 38px; }
+  .detail-list.two-col { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width:420px) {
+  .nav { padding: 8px 10px; }
+  .logo { width: 47px; height: 47px; }
+  .brand-name { font-size: 19px; }
+  .nav-btn { padding: 10px 8px; font-size: 12px; }
+  .hero { padding-left: 15px; padding-right: 15px; }
+  .tagline { font-size: 12px; letter-spacing: 1px; }
+  .features { gap: 12px; }
+  .feature { padding: 19px 14px; }
+  .feature p { font-size: 14px; }
+  .feature h2 { font-size: 18px; }
+  .content-section { padding: 28px 18px; margin-left: 12px; margin-right: 12px; }
+  .detail-card { padding: 24px 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
 </head>
+
 <body>
 
-  <div class="box">
-    <h2>Start trade now</h2>
-    <p>Start with $10,000 Virtual Money</p>
-
-    <form id="regForm">
-      <input type="text" id="fullName" placeholder="Full Name" required />
-      <input type="email" id="email" placeholder="Email Address" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <button type="submit" id="submitBtn">Create Account</button>
-    </form>
-
-    <div id="msg"></div>
-    <br>
-    <span style="color:#888; font-size: 14px;">Already have an account?</span> 
-    <a href="login.html">Login here</a>
+<!-- Website header: browser mockup removed -->
+<nav class="nav">
+  <div class="brand">
+    <div class="logo" aria-hidden="true">↗</div>
+    <div class="brand-name">Traders<span>Scheem</span></div>
   </div>
 
-  <script>
-    const form = document.getElementById('regForm');
-    const msg = document.getElementById('msg');
-    const btn = document.getElementById('submitBtn');
+  <div class="nav-actions">
+    <button class="nav-btn"
+      onclick="showNotice('Connect this button to your secure login page.')">
+      ♙ Log In
+    </button>
+    <button class="nav-btn open"
+      onclick="showNotice('Connect this button to your registration page.')">
+      Open account →
+    </button>
+  </div>
+</nav>
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      msg.className = '';
-      msg.textContent = 'Creating account...';
-      btn.disabled = true;
+<div class="ticker">
+  <div class="ticker-track">
+    <span>BULL MARKET <b class="up">984.2992 ▲</b></span>
+    <span>BEAR MARKET <b class="down">849.4023 ▼</b></span>
+    <span>VOL 25 <b class="up">482.16 ▲</b></span>
+    <span>VOL 50 <b class="down">216.73 ▼</b></span>
+    <span>VOL 100 <b class="up">727.93 ▲</b></span>
 
-      const fullName = document.getElementById('fullName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
+    <span>BULL MARKET <b class="up">984.2992 ▲</b></span>
+    <span>BEAR MARKET <b class="down">849.4023 ▼</b></span>
+    <span>VOL 25 <b class="up">482.16 ▲</b></span>
+    <span>VOL 50 <b class="down">216.73 ▼</b></span>
+    <span>VOL 100 <b class="up">727.93 ▲</b></span>
+  </div>
+</div>
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
+<!-- HERO -->
+<main class="hero">
+  <canvas id="chart-bg" aria-hidden="true"></canvas>
 
-      try {
-        const res = await fetch('https://traderscheem-backend-9p9o.onrender.com/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fullName, email, password }),
-          signal: controller.signal
-        });
+  <div class="hero-content">
+    <div class="hero-logo">
+      <div class="logo">↗</div>
+      <span class="orbit"></span>
+    </div>
 
-        clearTimeout(timeoutId);
-        const data = await res.json();
+    <h1>Traders <span>Scheem</span></h1>
 
-        if (data.success) {
-          msg.className = 'success';
-          msg.textContent = 'Account created! Redirecting...';
-          localStorage.setItem('userEmail', email);
-          setTimeout(() => { window.location.href = 'trade.html'; }, 800);
-        } else {
-          msg.className = 'error';
-          msg.textContent = data.message || 'Registration failed';
-          btn.disabled = false;
-        }
-      } catch (err) {
-        // Fallback: If Render takes > 4s or times out, log in instantly
-        clearTimeout(timeoutId);
-        msg.className = 'success';
-        msg.textContent = 'Account created! Redirecting...';
-        localStorage.setItem('userEmail', email);
-        setTimeout(() => { window.location.href = 'trade.html'; }, 800);
-      }
-    });
-  </script>
+    <div class="tagline">
+      PROFESSIONAL TRADING TERMINAL · POWERED BY DERIV
+    </div>
+
+    <p class="greeting">Good afternoon</p>
+
+    <p class="typing-line">
+      Welcome to <span id="typed" class="cyan"></span><span class="cursor"></span>
+    </p>
+
+    <p class="description">
+      A professional trading desk on your Deriv account:
+      live market data, automated execution and risk controls
+      in one terminal.
+    </p>
+
+    <section class="features">
+      <article class="feature">
+        <div class="quote">〃</div>
+        <p>
+          Mirror demo positions onto your real account, or
+          replicate one trade across connected accounts.
+        </p>
+        <h2>Copy Trading</h2>
+        <div class="sub">Portfolio mirroring</div>
+      </article>
+
+      <article class="feature secondary">
+        <div class="quote" style="color:#55d8f5">✦</div>
+        <p>
+          Explore trading tools and strategies to help you
+          study market movement.
+        </p>
+        <h2>Free Strategies</h2>
+        <div class="sub">Strategy tools</div>
+      </article>
+    </section>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-icon">◎</div>
+        <strong>12</strong>
+        <small>Trading tools</small>
+      </div>
+      <div class="stat">
+        <div class="stat-icon" style="color:#b397ff;border-color:#8d73c8">◷</div>
+        <strong>24/7</strong>
+        <small>Market access</small>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- THE PLATFORM -->
+<section class="content-section" id="platform">
+  <div class="section-kicker">THE PLATFORM</div>
+
+  <h2>Institutional-grade tools for every trader</h2>
+
+  <p class="section-lead">
+    Live Deriv market data, with every calculation shown
+    rather than hidden.
+  </p>
+
+  <p class="section-copy">
+    Trade manually, study a strategy, or explore account
+    mirroring. Understand the numbers and risks before
+    deciding whether to place a trade.
+  </p>
+
+  <div class="detail-list">
+    <article class="detail-card">
+      <div class="detail-icon">♧</div>
+      <h3>Automated execution</h3>
+      <div class="subheading">Your strategy, on repeat</div>
+      <p>
+        Explore rule-based trading and automation tools.
+        Test your strategy on a demo account before considering
+        real-money trading.
+      </p>
+    </article>
+
+    <article class="detail-card gold">
+      <div class="detail-icon">♟</div>
+      <h3>Transparent analytics</h3>
+      <div class="subheading">Measured, not guessed</div>
+      <p>
+        Review market data over a selected sample size and
+        understand how calculations are made.
+      </p>
+    </article>
+
+    <article class="detail-card purple">
+      <div class="detail-icon">☑</div>
+      <h3>Copy trading built in</h3>
+      <div class="subheading">One position, many accounts</div>
+      <p>
+        Explore copying and demo-following features. Account
+        mirroring requires appropriate broker authorization
+        and integration.
+      </p>
+    </article>
+
+    <article class="detail-card rose">
+      <div class="detail-icon">♢</div>
+      <h3>Risk management first</h3>
+      <div class="subheading">Limits before exposure</div>
+      <p>
+        Plan stake sizes, stop losses, take-profit levels
+        and maximum loss limits before trading.
+      </p>
+    </article>
+  </div>
+</section>
+
+<!-- GETTING STARTED -->
+<section class="content-section" id="getting-started">
+  <div class="section-kicker">GETTING STARTED</div>
+
+  <h2>From sign-in to your first position in three steps</h2>
+
+  <p class="section-lead">
+    No downloads, no licence keys, no set-up fees.
+  </p>
+
+  <div class="detail-list steps">
+    <article class="detail-card">
+      <div class="step-number">1</div>
+      <h3>Connect your Deriv account</h3>
+      <p>
+        Use the official broker authorization flow.
+        Never share your account password with this website.
+      </p>
+    </article>
+
+    <article class="detail-card">
+      <div class="step-number">2</div>
+      <h3>Analyse, then select a strategy</h3>
+      <p>
+        Review the available market data, examine your
+        strategy and understand its potential risks.
+      </p>
+    </article>
+
+    <article class="detail-card">
+      <div class="step-number">3</div>
+      <h3>Validate on demo, then decide</h3>
+      <p>
+        Test your strategy with virtual funds first.
+        Review performance before considering a real account.
+      </p>
+    </article>
+  </div>
+</section>
+
+<!-- PARTNER PROGRAMME -->
+<section class="content-section" id="partner">
+  <div class="detail-icon partner-icon"
+       style="color:#f5cf4d;border-color:#b59a42">
+    ▤
+  </div>
+
+  <div class="section-kicker">PARTNER PROGRAMME</div>
+
+  <h2 class="partner-title">Revenue Share</h2>
+
+  <div class="pill">Official partner terms apply</div>
+
+  <p class="section-lead">
+    Learn about the official Deriv partner programme and
+    check the current terms before promoting any offer.
+  </p>
+
+  <button class="section-button"
+    onclick="showNotice('Add your verified partner programme URL here.')">
+    How the revenue share works ↓
+  </button>
+
+  <button class="section-button primary"
+    onclick="showNotice('Connect this button to your verified partner registration URL.')">
+    ▤ &nbsp; Become a partner &nbsp; →
+  </button>
+</section>
+
+<!-- COMMUNITY -->
+<section class="content-section community" id="community">
+  <div class="section-kicker">COMMUNITY</div>
+
+  <h2>Join the Traders Scheem trading community</h2>
+
+  <p class="section-lead">
+    Market updates, strategy discussions and support from
+    the team.
+  </p>
+
+  <a class="section-button"
+     href="https://wa.me/254741030460"
+     target="_blank"
+     rel="noopener noreferrer"
+     style="text-decoration:none">
+    ☏ &nbsp; Chat on WhatsApp
+  </a>
+
+  <div class="trust-pills">
+    <span>♙ Secure broker login</span>
+    <span>ϟ Market data integration</span>
+  </div>
+</section>
+
+<footer class="footer">
+  Trading involves risk. This homepage is a visual demo.
+  Live market prices, account login and trading execution
+  require verified integrations.
+</footer>
+
+<script>
+/* Notice for buttons that still need integration */
+function showNotice(message) {
+  alert(message);
+}
+
+/* Animated typing text */
+const typed = document.getElementById("typed");
+
+const phrases = [
+  "Traders Scheem",
+  "your trading desk",
+  "smart trading tools"
+];
+
+let phraseIndex = 0;
+let charIndex = 0;
+let deleting = false;
+
+function typeLoop() {
+  const phrase = phrases[phraseIndex];
+  typed.textContent = phrase.slice(0, charIndex);
+
+  if (!deleting) {
+    charIndex++;
+
+    if (charIndex > phrase.length) {
+      deleting = true;
+      setTimeout(typeLoop, 1300);
+      return;
+    }
+  } else {
+    charIndex--;
+
+    if (charIndex < 0) {
+      charIndex = 0;
+      deleting = false;
+      phraseIndex = (phraseIndex + 1) % phrases.length;
+    }
+  }
+
+  setTimeout(typeLoop, deleting ? 45 : 95);
+}
+
+typeLoop();
+
+/* Animated decorative candlestick background */
+const canvas = document.getElementById("chart-bg");
+const ctx = canvas.getContext("2d");
+
+let W = 0;
+let H = 0;
+let dpr = 1;
+let candles = [];
+let stars = [];
+let phase = 0;
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = canvas.clientWidth;
+  H = canvas.clientHeight;
+
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  candles = Array.from(
+    { length: Math.ceil(W / 42) + 3 },
+    (_, i) => ({
+      x: i * 42 + 8,
+      y: 0.32 + Math.random() * 0.43,
+      h: 25 + Math.random() * 85,
+      up: Math.random() > 0.45
+    })
+  );
+
+  stars = Array.from({ length: 65 }, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    r: 0.5 + Math.random() * 1.5,
+    
+      a: 0.15 + Math.random() * 0.55
+    }));
+
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  phase += 0.012;
+
+  // Twinkling stars
+  stars.forEach(s => {
+    ctx.globalAlpha =
+      s.a * (0.7 + 0.3 * Math.sin(phase * 2 + s.x));
+
+    ctx.fillStyle = "#e5f5ff";
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Moving candlesticks
+  candles.forEach(c => {
+    c.x -= 0.18;
+
+    if (c.x < -5) {
+      c.x = W + 30;
+      c.y = 0.25 + Math.random() * 0.5;
+      c.h = 25 + Math.random() * 90;
+      c.up = Math.random() > 0.45;
+    }
+
+    const y = c.y * H;
+    const bodyH = c.h;
+    const top = y - bodyH * 0.5;
+    const bottom = y + bodyH * 0.5;
+
+    ctx.globalAlpha = 0.42;
+    ctx.strokeStyle = c.up ? "#37d8f4" : "#fb658d";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(c.x, top - 18);
+    ctx.lineTo(c.x, bottom + 18);
+    ctx.stroke();
+
+    ctx.globalAlpha = 0.45;
+    ctx.fillStyle = c.up ? "#27c7f0" : "#f45c86";
+    ctx.fillRect(c.x - 7, top, 14, bodyH);
+  });
+
+  // Moving gold market line
+  ctx.globalAlpha = 0.8;
+  ctx.beginPath();
+
+  for (let x = 0; x <= W; x += 5) {
+    const y =
+      H * 0.57 +
+      Math.sin(x * 0.014 + phase) * 27 +
+      Math.sin(x * 0.037 - phase * 0.7) * 10;
+
+    if (x === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  }
+
+  ctx.strokeStyle = "#f4d24d";
+  ctx.lineWidth = 2.2;
+  ctx.shadowColor = "#f3ce4d";
+  ctx.shadowBlur = 9;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.globalAlpha = 1;
+
+  requestAnimationFrame(draw);
+}
+
+// Start the animation
+window.addEventListener("resize", resize);
+resize();
+draw();
+</script>
 
 </body>
 </html>
